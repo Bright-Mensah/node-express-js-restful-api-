@@ -134,6 +134,20 @@ app.put("/task/:id", (req, res) => {
     .then((data) => res.send({ msg: "task updated successfully", data }))
     .catch(() => res.send({ msg: "something went wrong...." }));
 });
+
+// delete task
+app.delete("/task/:id", function (req, res) {
+  // get task id and delete them
+  const id = req.params.id;
+
+  taskSchema
+    .findByIdAndDelete(id)
+    .then(() => res.send({ msg: "task deleted successfully" }))
+    .catch({ msg: "something wernt" });
+});
+
+// delete all task from the database
+
 app.listen(PORT, () =>
   console.log(`server started working on port http://localhost:${PORT}`)
 );
