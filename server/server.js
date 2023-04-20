@@ -53,6 +53,30 @@ app.post("/Signup", (req, res) => {
     });
 });
 
+// login user
+app.post("/login", (req, res) => {
+  // check if email exist or not
+  userSchema
+    .findOne({
+      email: req.body.email,
+    })
+    .then((emailExist) => {
+      if (emailExist) {
+        //if email exist , check if the email matches with the password
+        const userPassword = req.body.password;
+
+        {
+          userPassword === emailExist.password
+            ? res.send({ msg: "login successful" })
+            : res.send({ msg: "failed" });
+        }
+      } else {
+        // if the email does not exist then send an error message to the user
+        res.send({ msg: "failed" });
+      }
+    });
+});
+
 app.listen(PORT, () =>
   console.log(`server started working on port http://localhost:${PORT}`)
 );
