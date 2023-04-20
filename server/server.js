@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import userSchema from "./Schema/index.js";
-
+import taskSchema from "./Schema/task.js";
 const app = express();
 
 // middleware
@@ -76,7 +76,64 @@ app.post("/login", (req, res) => {
       }
     });
 });
+// add task
+app.post("/task", function (req, res) {
+  // check if task exist
+  // check with both the title and the description
+  taskSchema
+    .findOne({
+      title: req.body.title,
+      description: req.body.description,
+    })
+    .then((taskExist) => {
+      if (taskExist) {
+        // if task exist prompt the user that task already exist
+        res.send({ msg: "task already exist" });
+      } else {
+        // if task does not exist then allow the user to create a task
+        let userTask = new taskSchema({
+          title: req.body.title,
+          description: req.body.description,
+        });
 
+        userTask
+          .save()
+          .then(() => res.send({ msg: "task added successfully" }))
+          .catch(() => res.send({ msg: "something went wrong, try again" }));
+      }
+    });
+});
+
+// get all task (read task)
+app.get("/task", function (req, res) {
+  // get all task from the db
+  taskSchema
+    .find({})
+    .then((data) => res.send(data))
+    .catch(() => res.send({ msg: "something went wrong....." }));
+});
+
+// get task for update and delete
+app.get("/task/:id", function (req, res) {
+  const id = req.params.id;
+  taskSchema
+    .findById(id)
+    .then((data) => res.send(data))
+    .catch(() => res.send({ msg: "something went wrong ....." }));
+});
+
+// update task
+app.put("/task/:id", (req, res) => {
+  // get task by id and update
+  taskSchema
+    .findByIdAndUpdate(req.params.id, {
+      title: req.body.title,
+      description: req.body.description,
+      updated_at: new Date(),
+    })
+    .then((data) => res.send({ msg: "task updated successfully", data }))
+    .catch(() => res.send({ msg: "something went wrong...." }));
+});
 app.listen(PORT, () =>
   console.log(`server started working on port http://localhost:${PORT}`)
 );
