@@ -143,10 +143,18 @@ app.delete("/task/:id", function (req, res) {
   taskSchema
     .findByIdAndDelete(id)
     .then(() => res.send({ msg: "task deleted successfully" }))
-    .catch({ msg: "something wernt" });
+    .catch({ msg: "something went wrong" });
 });
 
 // delete all task from the database
+app.delete("/task", function (req, res) {
+  taskSchema
+    .deleteMany({})
+    .then(() => res.send({ msg: "deleted all task" }))
+    .catch(function () {
+      res.send({ msg: "someting went wrong" });
+    });
+});
 
 app.listen(PORT, () =>
   console.log(`server started working on port http://localhost:${PORT}`)
